@@ -26,9 +26,9 @@
     "base64-image-loader": "^1.0.0",
     "crypto": "0.0.3",
     "file-loader": "^0.9.0",
-    "loader-utils": "^0.2.15",
+    "loader-utils": "^0.2.15"
   },
   "peerDependencies": {
     "mjml": ">=2.3.0 || >=3.3.2"
-  },
+  }
 }
