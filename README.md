@@ -4,9 +4,11 @@ Converts MJML files with images to HTML and exports them as string or as Nodemai
 
 Images should have relative paths (starting from `./` or `../`). Such files resolved and inserted as base64 strings (see examples below).
 
+This package adds dependencies to Webpack for included mjml templates `<mj-include path="./some_other.mjml" />`. So if you change included file, also will be regenerated depended files.
+
 ## Install
 ```js
-npm install --save-dev mjml-with-images-loader
+npm install --save-dev mjml-with-images-loader mjml
 ```
 
 ## Usage

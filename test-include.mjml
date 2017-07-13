@@ -1,0 +1,7 @@
+<mj-container>
+  <mj-section>
+    <mj-column>
+      <mj-text>INCLUDED MESSAGE</mj-text>
+    </mj-column>
+  </mj-section>
+</mj-container>

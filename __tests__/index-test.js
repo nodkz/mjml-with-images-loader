@@ -78,6 +78,21 @@ describe('mjmlWithImageLoader', () => {
     expect(addDependency.mock.calls).toMatchSnapshot();
   });
 
+  it('should addDependency for mj-include to webpack', () => {
+    addDependency.mockClear();
+    expect(
+      mjmlWithImageLoaderOnlyHtml(`
+      <mjml>
+        <mj-body>
+          <mj-include path="./test-include.mjml" />
+        </mj-body>
+      </mjml>
+    `)
+    ).toMatchSnapshot();
+    expect(addDependency).toHaveBeenCalled();
+    expect(addDependency.mock.calls).toMatchSnapshot();
+  });
+
   describe('errors', () => {
     beforeEach(() => {
       global.console = {

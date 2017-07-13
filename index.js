@@ -23,6 +23,8 @@ module.exports = function(content) {
   	});
   }
 
+  trackChangesMjInclude.bind(this)(content);
+
   let result = {};
   try {
     result = mjml.mjml2html(content, { level: 'soft' });
@@ -90,5 +92,15 @@ function prepareSrc(html, config) {
       html: html,
       attachments: Object.keys(images).map(k => images[k]),
     };
+  }
+}
+
+function trackChangesMjInclude(html) {
+  // <mj-include path="./src/mailer/_shared/header.mjml" />
+  const re = /(mj-include path="((?:\.|\.\.)\/.*?)")/ig;
+  let match;
+  while (match = re.exec(html)) {
+    const imgPath = path.resolve(match[2]);
+    this.addDependency(imgPath);
   }
 }
