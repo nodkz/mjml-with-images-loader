@@ -1,8 +1,8 @@
 const mjml = require('mjml');
 const colors = require('colors');
 const path = require('path');
-const loaderUtils = require("loader-utils");
-const fs = require("fs");
+const loaderUtils = require('loader-utils');
+const fs = require('fs');
 const crypto = require('crypto');
 
 function getFileExtension(path) {
@@ -12,18 +12,11 @@ function getFileExtension(path) {
 module.exports = function(content) {
   this.cacheable && this.cacheable();
   this.value = content;
-  const config = {
-		onlyHtml: false,
-	};
+  const config = loaderUtils.getOptions(this) || {
+    onlyHtml: false,
+  };
 
-  if (this.query) {
-  	const query = loaderUtils.parseQuery(this.query);
-  	Object.keys(query).forEach(function(attr) {
-  		config[attr] = query[attr];
-  	});
-  }
-
-  trackChangesMjInclude.bind(this)(content);
+  trackMjIncludeChanges.bind(this)(content);
 
   let result = {};
   try {
@@ -51,16 +44,16 @@ function displayErrors(errors) {
     console.log(msg);
   });
 
-  return htmlErr.join('<br />')
+  return htmlErr.join('<br />');
 }
 
 function prepareSrc(html, config) {
   const images = {};
 
   // find relative paths in src=""
-  const re = /(src="((?:\.|\.\.)\/.*?)")/ig;
+  const re = /(src="((?:\.|\.\.)\/.*?)")/gi;
   let match;
-  while (match = re.exec(html)) {
+  while ((match = re.exec(html))) {
     const imgPath = path.normalize(`${this.context}/${match[2]}`);
     const imgExt = getFileExtension(imgPath);
     this.addDependency(imgPath);
@@ -75,7 +68,7 @@ function prepareSrc(html, config) {
     if (config.onlyHtml) {
       html = html.replace(match[1], `src="${imageBase64}"`);
     } else {
-      const cid = crypto.createHash('md5').update(imageBase64).digest("hex");
+      const cid = crypto.createHash('md5').update(imageBase64).digest('hex');
       html = html.replace(match[1], `src="cid:${cid}"`);
       images[cid] = {
         filename: `${cid}.${imgExt}`,
@@ -95,11 +88,11 @@ function prepareSrc(html, config) {
   }
 }
 
-function trackChangesMjInclude(html) {
+function trackMjIncludeChanges(html) {
   // <mj-include path="./src/mailer/_shared/header.mjml" />
-  const re = /(mj-include path="((?:\.|\.\.)\/.*?)")/ig;
+  const re = /(mj-include path="((?:\.|\.\.)\/.*?)")/gi;
   let match;
-  while (match = re.exec(html)) {
+  while ((match = re.exec(html))) {
     const imgPath = path.resolve(match[2]);
     this.addDependency(imgPath);
   }

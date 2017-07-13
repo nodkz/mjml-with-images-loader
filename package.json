@@ -1,6 +1,6 @@
 {
   "name": "mjml-with-images-loader",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MJML loader for webpack with images",
   "main": "index.js",
   "files": [
@@ -30,8 +30,7 @@
     "base64-image-loader": "^1.0.0",
     "colors": "^1.1.2",
     "crypto": "0.0.3",
-    "file-loader": "^0.9.0",
-    "loader-utils": "^0.2.15"
+    "loader-utils": "^1.1.0"
   },
   "peerDependencies": {
     "mjml": ">=3.3.2"
