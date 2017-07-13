@@ -1,10 +1,14 @@
 {
   "name": "mjml-with-images-loader",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "MJML loader for webpack with images",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -24,11 +28,21 @@
   "homepage": "https://github.com/nodkz/mjml-with-images-loader#readme",
   "dependencies": {
     "base64-image-loader": "^1.0.0",
+    "colors": "^1.1.2",
     "crypto": "0.0.3",
     "file-loader": "^0.9.0",
     "loader-utils": "^0.2.15"
   },
   "peerDependencies": {
-    "mjml": ">=2.3.0 || >=3.3.2"
+    "mjml": ">=3.3.2"
+  },
+  "devDependencies": {
+    "jest": "^20.0.4",
+    "mjml": "^3.3.3"
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>"
+    ]
   }
 }

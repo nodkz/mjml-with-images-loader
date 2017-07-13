@@ -1,8 +1,9 @@
-var mjml = require('mjml');
-var path = require('path');
-var loaderUtils = require("loader-utils");
-var fs = require("fs");
-var crypto = require('crypto');
+const mjml = require('mjml');
+const colors = require('colors');
+const path = require('path');
+const loaderUtils = require("loader-utils");
+const fs = require("fs");
+const crypto = require('crypto');
 
 function getFileExtension(path) {
   return path.split('.').pop();
@@ -11,32 +12,68 @@ function getFileExtension(path) {
 module.exports = function(content) {
   this.cacheable && this.cacheable();
   this.value = content;
-  var html = mjml.mjml2html(content);
-
-	var config = {
+  const config = {
 		onlyHtml: false,
 	};
 
-	var query = loaderUtils.parseQuery(this.query);
-	Object.keys(query).forEach(function(attr) {
-		config[attr] = query[attr];
-	});
+  if (this.query) {
+  	const query = loaderUtils.parseQuery(this.query);
+  	Object.keys(query).forEach(function(attr) {
+  		config[attr] = query[attr];
+  	});
+  }
 
-  var images = {};
+  let result = {};
+  try {
+    result = mjml.mjml2html(content, { level: 'soft' });
+  } catch (e) {
+    result.html = displayErrors.bind(this)(e);
+  }
+  if (result.errors && result.errors.length) {
+    result.html = displayErrors.bind(this)(result.errors);
+  }
+
+  const mod = prepareSrc.bind(this)(result.html || '', config);
+
+  return `module.exports = ${JSON.stringify(mod)};`;
+};
+
+function displayErrors(errors) {
+  if (!Array.isArray(errors)) errors = [errors];
+  let htmlErr = [];
+  console.log(colors.red(`[mjml-with-images-loader] ERROR in ${this.resourcePath}:`));
+  htmlErr.push(`File: ${this.resourcePath}`);
+  errors.forEach(e => {
+    const msg = `- ${e.formattedMessage ? e.formattedMessage : e.message}`;
+    htmlErr.push(msg);
+    console.log(msg);
+  });
+
+  return htmlErr.join('<br />')
+}
+
+function prepareSrc(html, config) {
+  const images = {};
 
   // find relative paths in src=""
-  var re = /(src="((?:\.|\.\.)\/.*?)")/ig;
-  var match;
+  const re = /(src="((?:\.|\.\.)\/.*?)")/ig;
+  let match;
   while (match = re.exec(html)) {
-    var imgPath = path.normalize(`${this.context}/${match[2]}`);
-    var imgExt = getFileExtension(imgPath);
+    const imgPath = path.normalize(`${this.context}/${match[2]}`);
+    const imgExt = getFileExtension(imgPath);
     this.addDependency(imgPath);
-    var imageBase64 = `data:image/${imgExt};base64,${fs.readFileSync(imgPath).toString('base64')}`;
+
+    let imageBase64;
+    try {
+      imageBase64 = `data:image/${imgExt};base64,${fs.readFileSync(imgPath).toString('base64')}`;
+    } catch (e) {
+      html = displayErrors.bind(this)(e);
+    }
 
     if (config.onlyHtml) {
       html = html.replace(match[1], `src="${imageBase64}"`);
     } else {
-      var cid = crypto.createHash('md5').update(imageBase64).digest("hex");
+      const cid = crypto.createHash('md5').update(imageBase64).digest("hex");
       html = html.replace(match[1], `src="cid:${cid}"`);
       images[cid] = {
         filename: `${cid}.${imgExt}`,
@@ -47,12 +84,11 @@ module.exports = function(content) {
   }
 
   if (config.onlyHtml) {
-    return `module.exports = ${JSON.stringify(html)};`;
+    return html;
   } else {
-    var mailOptions = {
+    return {
       html: html,
       attachments: Object.keys(images).map(k => images[k]),
-    }
-    return `module.exports = ${JSON.stringify(mailOptions)};`;
+    };
   }
-};
+}
