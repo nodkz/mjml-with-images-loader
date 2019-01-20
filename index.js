@@ -1,4 +1,4 @@
-const mjml = require('mjml');
+const mjml2html = require('mjml');
 const colors = require('colors');
 const path = require('path');
 const loaderUtils = require('loader-utils');
@@ -20,7 +20,7 @@ module.exports = function(content) {
 
   let result = {};
   try {
-    result = mjml.mjml2html(content, { level: 'soft' });
+    result = mjml2html(content, { level: 'soft' });
   } catch (e) {
     result.html = displayErrors.bind(this)(e);
   }
