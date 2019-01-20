@@ -1,6 +1,6 @@
 {
   "name": "mjml-with-images-loader",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "MJML loader for webpack with images",
   "main": "index.js",
   "files": [
