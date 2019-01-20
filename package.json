@@ -33,11 +33,11 @@
     "loader-utils": "^1.1.0"
   },
   "peerDependencies": {
-    "mjml": ">=3.3.2"
+    "mjml": ">=4.1.0"
   },
   "devDependencies": {
     "jest": "^20.0.4",
-    "mjml": "^3.3.3"
+    "mjml": "^4.3.0"
   },
   "jest": {
     "roots": [
