@@ -20,7 +20,7 @@ module.exports = function(content) {
 
   let result = {};
   try {
-    result = mjml2html(content, { level: 'soft' });
+    result = mjml2html(content, { level: 'soft', filePath: this.resourcePath });
   } catch (e) {
     result.html = displayErrors.bind(this)(e);
   }
@@ -93,7 +93,7 @@ function trackMjIncludeChanges(html) {
   const re = /(mj-include path="((?:\.|\.\.)\/.*?)")/gi;
   let match;
   while ((match = re.exec(html))) {
-    const imgPath = path.resolve(match[2]);
+    const imgPath = path.normalize(`${this.context}/${match[2]}`);
     this.addDependency(imgPath);
   }
 }
